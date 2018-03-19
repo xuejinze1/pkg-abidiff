@@ -166,7 +166,7 @@ def extract_pkgs(age, kind):
         if m:
             fmt = m.group(1)
         
-        if not m or fmt not in ["rpm", "deb", "apk", "tbz2", "xpak"]:
+        if not m or fmt not in ["rpm", "deb", "ddeb", "apk", "tbz2", "xpak"]:
             exit_status("Error", "unknown format of package \'"+pkg+"\'")
         
         pkg_abs = os.path.abspath(pkg)
@@ -174,7 +174,7 @@ def extract_pkgs(age, kind):
         os.chdir(extr_dir)
         if fmt=="rpm":
             subprocess.call("rpm2cpio \""+pkg_abs+"\" | cpio -id --quiet", shell=True)
-        elif fmt=="deb":
+        elif fmt in ("deb", "ddeb"):
             subprocess.call(["dpkg-deb", "--extract", pkg_abs, "."])
         elif fmt=="apk":
             with open(TMP_DIR_INT+"/err", "a") as err_log:
@@ -224,7 +224,7 @@ def get_attrs(path):
         r = subprocess.check_output(["rpm", "-qp", "--queryformat", "%{name},%{version},%{release},%{arch}", path])
         name, ver, rl, arch = r.split(",")
         ver = ver+"-"+rl
-    elif fmt=="deb":
+    elif fmt in ("deb", "ddeb"):
         r = subprocess.check_output(["dpkg", "-f", path])
         attr = {"Package":None, "Version":None, "Architecture":None}
         for line in r.split("\n"):
@@ -502,7 +502,7 @@ def scenario():
             
             fmt = get_fmt(pkg)
             
-            if fmt is None or fmt not in ["rpm", "deb", "apk", "tbz2", "xpak"]:
+            if fmt is None or fmt not in ["rpm", "deb", "ddeb", "apk", "tbz2", "xpak"]:
                 exit_status("Error", "unknown format of package "+pkg)
             
             pkg_formats[fmt] = 1
