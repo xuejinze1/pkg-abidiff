@@ -645,7 +645,7 @@ def scenario():
                         if re.match(r".*\.debug\Z", f):
                             fkind = "debuginfo"
                         
-                        if get_fmt(PKGS[age]["debug"].keys()[0])=="deb":
+                        if get_fmt(PKGS[age]["debug"].keys()[0]) in （"deb"， "ddeb"):
                             if is_object(fpath):
                                 fkind = "debuginfo"
                     elif kind=="devel":
